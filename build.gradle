@@ -3,9 +3,12 @@ import org.apache.tools.ant.filters.ReplaceTokens
 buildscript {
     repositories {
         mavenCentral()
+        maven { url "https://plugins.gradle.org/m2/" }
+        google()
+        maven { url 'https://www.jitpack.io' }
     }
     dependencies {
-        classpath 'org.ajoberstar:gradle-git:1.1.0'
+        // classpath 'org.ajoberstar:gradle-git:1.1.0'
     }
 }
 
@@ -14,7 +17,7 @@ plugins {
     id "jacoco"
     id "java-library"
     id "maven-publish"
-    id "org.ajoberstar.github-pages" version "1.7.2"
+    // id "org.ajoberstar.github-pages" version "1.7.2"
     id "signing"
 }
 
@@ -27,8 +30,10 @@ def getProperty = { property ->
 
 group = "com.pusher"
 version = "2.4.4"
-sourceCompatibility = "1.8"
-targetCompatibility = "1.8"
+// sourceCompatibility = "1.8"
+// targetCompatibility = "1.8"
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 ext.sharedManifest = manifest {
     attributes(
@@ -43,11 +48,14 @@ ext.sharedManifest = manifest {
 
 repositories {
     mavenCentral()
+    maven { url "https://plugins.gradle.org/m2/" }
+    google()
+    maven { url 'https://www.jitpack.io' }
 }
 
 dependencies {
-    implementation "com.google.code.gson:gson:2.9.1"
-    implementation "org.java-websocket:Java-WebSocket:1.5.3"
+    implementation "com.google.code.gson:gson:2.+"
+    implementation "org.java-websocket:Java-WebSocket:1.6.0"
 
     testImplementation "org.mockito:mockito-all:1.8.5"
     testImplementation "org.powermock:powermock-module-junit4:1.4.11"
@@ -87,6 +95,8 @@ jar {
 }
 
 task fatJar(type: Jar, dependsOn: configurations.runtimeClasspath) {
+    // module-info.class
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest = project.manifest {
         from sharedManifest
     }
@@ -111,7 +121,7 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 assemble.dependsOn javadocJar
 
-githubPages {
+/* githubPages {
     repoUri = 'https://github.com/pusher/pusher-websocket-java.git'
     pages {
         from javadoc.outputs.files
@@ -121,7 +131,7 @@ githubPages {
         username = { getProperty("github.username") }
         password = { getProperty("github.password") }
     }
-}
+} */
 
 artifacts {
     archives jar, fatJar, sourcesJar, javadocJar
